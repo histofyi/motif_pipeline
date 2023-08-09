@@ -171,3 +171,4 @@ paths.toml
 # Ignored folders
 tmp/*
 log/*
+output/*
