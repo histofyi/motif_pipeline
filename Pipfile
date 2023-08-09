@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 requests = "*"
 rich = "*"
+toml = "*"
+gitpython = "*"
+dparse = "*"
 
 [dev-packages]
 
