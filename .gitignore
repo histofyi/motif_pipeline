@@ -166,3 +166,8 @@ cython_debug/
 # Config
 secrets.toml
 paths.toml
+
+
+# Ignored folders
+tmp/*
+log/*
