@@ -1,9 +1,7 @@
 from typing import Dict
 import requests
 
-from helpers.files import write_file
-
-
+from helpers.files import write_json
 
 alleles = {}
 peptides = {}
@@ -11,7 +9,7 @@ amino_acid_distributions = {}
 peptide_length_distributions = {}
 
 
-def slugify_mhc_motif_atlas_allele(allele:str) -> str:
+def slugify_hla_motif_atlas_allele(allele:str) -> str:
     """
     This function converts the allele name from the MHC Motif Atlas into a slugified version including the species stem and correct placements of '_
     
@@ -170,7 +168,7 @@ def process_class_i_motif_data(**kwargs) -> Dict[str,str]:
     
     
 
-    # iterate through the lines and process the data
+    # iterate through the lines and process the data (first round)
     i = 0
     for line in lines:
         if i != 0:
@@ -181,38 +179,61 @@ def process_class_i_motif_data(**kwargs) -> Dict[str,str]:
 
             # currently only capturing the human alleles and their peptides
             if not 'H2' in allele:
-                allele_number = slugify_mhc_motif_atlas_allele(allele)
+                allele_number = slugify_hla_motif_atlas_allele(allele)
+                
+                # the add function returns true if the peptide was added to the allele dictionary (and is not a duplicate)
                 peptide_added = add_allele_and_peptide(allele_number, peptide, peptide_length)
+                
+                # if the peptide is unique
                 if peptide_added:
+                    # we can add the amino acids at each position of the peptide to the amino acid distribution
                     add_to_amino_acid_distribution(allele_number, peptide, peptide_length)
 
+                # and add the peptide to the peptide dictionary
                 add_peptide(peptide, allele_number)
 
                 
         i+=1 
 
+    # iterate through the data for the second time to turn counts into percentages
     j = 0
     for allele in alleles:
-        if j == 0:
+
+        # for each allele we need to process the peptide length distribution and the amino acid distribution
+        process_peptide_length_distribution(allele)
+        process_amino_acid_distribution(allele)
+
+        # if the verbose flag is set, print the data for this allele
+        if verbose:
             console.print (allele)
-            process_peptide_length_distribution(allele)
-            process_amino_acid_distribution(allele)
-
             console.print (peptide_length_distributions[allele])  
-
             console.print (amino_acid_distributions[allele])
         j+=1      
     
+    # output some information on the output of the pipeline
+    if verbose:
+        # print some stats
+        print (f"Number of peptides in dataset: {len(lines) -1}")
+        print (f"Number of HLA alleles for which there is motif data: {len(alleles)}")
+        print (f"Number of unique peptides: {len(peptides)}")
 
-    print (f"Number of peptides in dataset: {len(lines) -1}")
-    print (f"Number of HLA alleles for which there is motif data: {len(alleles)}")
-    print (f"Number of unique peptides: {len(peptides)}")
+        # print some example data
+        console.print ('HLA-A*02:01 / P2')
+        console.print (amino_acid_distributions['hla_a_02_01']['9']['2'])
+        console.print ('HLA-A*02:01 / P9')
+        console.print (amino_acid_distributions['hla_a_02_01']['9']['9'])
 
-    console.print ('HLA-A*02:01 / P2')
-    console.print (amino_acid_distributions['hla_a_02_01']['9']['P2'])
-    console.print ('HLA-A*02:01 / P2')
-    console.print (amino_acid_distributions['hla_a_02_01']['9']['P9'])
+    # write the files to the output directory
+    for compilation in config['CONSTANTS']['DATA_COMPILATIONS']:
+        filepath = f"{output_path}/{compilation}.json"
+        write_json(filepath, eval(compilation), pretty=True)
 
-    action_log = {}
+
+    # create the action log which will be included in the log file for this run of the pipeline
+    action_log = {
+        'allele_count':len(alleles),
+        'peptide_count':len(peptides),
+        'lines_processed':len(lines)-1
+    }
     
     return action_log

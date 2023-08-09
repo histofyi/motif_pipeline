@@ -1,2 +1,3 @@
 MHC_MOTIF_ATLAS_CLASS_I = "http://mhcmotifatlas.org/data/classI/MS/Peptides/all_peptides.txt"
 MHC_MOTIF_ATLAS_CLASS_I_FILENAME = "atlas_class_i_all_peptides.txt"
+DATA_COMPILATIONS = ['alleles','peptides','amino_acid_distributions','peptide_length_distributions']

@@ -10,7 +10,7 @@ def run_pipeline(**kwargs) -> Dict:
 
     pipeline.load_steps(steps)
 
-    #pipeline.run_step('1')
+    pipeline.run_step('1')
     pipeline.run_step('2')
 
     action_logs = pipeline.finalise()

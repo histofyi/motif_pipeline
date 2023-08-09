@@ -9,7 +9,7 @@ steps = {
         'is_multi': False,
         'multi_param': None,
         'multi_options': None,
-        'has_progress': True
+        'has_progress': False
     },
     '2':{
         'function':process_class_i_motif_data,
@@ -18,6 +18,6 @@ steps = {
         'is_multi': False,
         'multi_param': None,
         'multi_options': None,
-        'has_progress': True
+        'has_progress': False
     }
 }
