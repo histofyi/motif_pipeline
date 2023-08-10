@@ -1,6 +1,8 @@
 from typing import Dict
 import requests
 
+from pipeline import create_folder
+
 from helpers.files import write_json
 
 alleles = {}
@@ -224,8 +226,10 @@ def process_class_i_motif_data(**kwargs) -> Dict[str,str]:
         console.print (amino_acid_distributions['hla_a_02_01']['9']['9'])
 
     # write the files to the output directory
+    output_folder = f"{output_path}/{config['PATHS']['PIPELINE_WAREHOUSE_FOLDER']}"
+    create_folder(output_folder, verbose)
     for compilation in config['CONSTANTS']['DATA_COMPILATIONS']:
-        filepath = f"{output_path}/{compilation}.json"
+        filepath = f"{output_folder}/{compilation}.json"
         write_json(filepath, eval(compilation), pretty=True)
 
 
