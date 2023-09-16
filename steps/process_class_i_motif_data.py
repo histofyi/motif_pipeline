@@ -230,7 +230,7 @@ def process_class_i_motif_data(**kwargs) -> Dict[str,str]:
     create_folder(output_folder, verbose)
     for compilation in config['CONSTANTS']['DATA_COMPILATIONS']:
         filepath = f"{output_folder}/{compilation}.json"
-        write_json(filepath, eval(compilation), pretty=True)
+        write_json(filepath, eval(compilation))
 
 
     # create the action log which will be included in the log file for this run of the pipeline
