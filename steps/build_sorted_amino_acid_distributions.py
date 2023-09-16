@@ -52,7 +52,7 @@ def manipulate_data(motif_data: Dict[str, Dict[str, Dict[str, str]]]) -> Dict[st
     Returns:
         Dict[str, Dict[str, Dict[str, str]]]: The processed motif data
     """
-    for key, sub_dict in motif_data.items():
+    for position, sub_dict in motif_data.items():
 
         # Ensure the percentage key exists and set to zero if not
         for amino_acid, amino_acid_data in sub_dict.items():
@@ -63,10 +63,11 @@ def manipulate_data(motif_data: Dict[str, Dict[str, Dict[str, str]]]) -> Dict[st
         for amino_acid, amino_acid_data in sub_dict.items():
             amino_acid_data['grade'] = assign_grade(amino_acid_data['percentage'])
             amino_acid_data['rounded_percentage'] = round(amino_acid_data['percentage'], 1)
+            amino_acid_data['amino_acid'] = amino_acid
         
         # Order the sub-dictionary by the percentage value
-        sorted_sub_dict = dict(sorted(sub_dict.items(), key=lambda item: get_percentage(item[1]), reverse=True))
-        motif_data[key] = sorted_sub_dict
+        sorted_sub_dict = sorted(sub_dict.items(), key=lambda item: get_percentage(item[1]), reverse=True)
+        motif_data[position] = [value for key, value in sorted_sub_dict]
 
     return motif_data
 
