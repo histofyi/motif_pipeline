@@ -9,6 +9,13 @@ rich = "*"
 toml = "*"
 gitpython = "*"
 dparse = "*"
+logomaker = "*"
+numpy = "*"
+matplotlib = "*"
+pandas = "==1.4.0"
+datasette = "*"
+hdbscan = "*"
+csvs-to-sqlite = "*"
 
 [dev-packages]
 
