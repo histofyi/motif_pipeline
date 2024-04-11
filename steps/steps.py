@@ -6,7 +6,7 @@ from build_logoplots import build_logoplots
 from build_peptide_length_distribution_plots import build_peptide_length_distribution_plots
 from build_text_descriptions import build_text_descriptions
 from cluster_motifs import cluster_motifs
-
+from build_table_representation import build_table_representation
 
 
 
@@ -77,6 +77,15 @@ steps = {
     '8':{
         'function':cluster_motifs,
         'title_template':'the output to cluster similar motifs - coming soon.',
+        'title_verb':['Processing', 'Processes'],
+        'is_multi': False,
+        'multi_param': None,
+        'multi_options': None,
+        'has_progress': False
+    },
+    '9':{
+        'function':build_table_representation,
+        'title_template':'the output to build a table representation for use in datasette - coming soon.',
         'title_verb':['Processing', 'Processes'],
         'is_multi': False,
         'multi_param': None,
