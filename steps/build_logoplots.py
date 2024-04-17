@@ -4,6 +4,8 @@ from pipeline import create_folder
 
 from helpers.files import write_json, read_json
 
+import os 
+
 from io import BytesIO
 import base64
 
@@ -71,55 +73,71 @@ def build_logoplots(**kwargs) -> Dict[str,str]:
     create_folder(f"{output_path}/motifs/logoplots/png", verbose)
     create_folder(f"{output_path}/motifs/logoplots/svg", verbose)
 
-    logoplots = {}
-
+    # Create counters for number of alleles and motifs processed
     i = 0
     j = 0
+
+    # Iterate throught the alleles
     for allele in alleles:
+
+        # set the length to 9, at the moment we're only creating logoplots for nonamers
         length = '9'
-        peptides = alleles[allele][length]
-
-        counts_mat = logomaker.alignment_to_matrix(peptides)
-        counts_mat.index = range(1, int(length) + 1)
         
-        info_mat = logomaker.transform_matrix(counts_mat, from_type='counts', to_type='information')
-        
-        logoplot = None
-
-        logoplot = logomaker.Logo(info_mat, vpad=0.1, color_scheme=colors, show_spines=False, figsize=(25,20))
-        logoplot.ax.tick_params(axis='both', which='major', labelsize=40)
-
-        logoplot.ax.set_xlabel('Peptide position', fontsize=60, labelpad=10)
-        logoplot.ax.set_ylabel('Bits', fontsize=60, labelpad=40)
-
-        logoplot.style_spines(visible=False)
-        logoplot.style_spines(spines=['left', 'bottom'], visible=True)
-
-        logoplot_svg_stem = f"{output_path}/motifs/logoplots/svg/{allele}_{length}"
+        # create a file stem for the png of the logoplot
+        # TODO check if we're using the text representation of the png
         logoplot_png_stem = f"{output_path}/motifs/logoplots/png/{allele}_{length}"
 
-        #logo_svg = BytesIO()
-        logo_png = BytesIO()
+        # set a boolean for whether the plot already exists or not
+        logoplot_exists = False
 
-        #plt.savefig(logo_svg, format='svg')
-        plt.savefig(logo_png, format='png')
-        
-        #plt.savefig(f"{logoplot_svg_stem}.svg", format='svg')
-        plt.savefig(f"{logoplot_png_stem}.png", format='png')
+        # check if the logoplot already exists
+        if os.path.exists(f"{logoplot_png_stem}.png") and os.path.exists(f"{logoplot_png_stem}.txt"):
+            logoplot_exists = True
 
+        # if the force flag is set or the logoplot doesn't exist, create the logoplot
+        if force or not logoplot_exists:
 
-        #logo_svg_data = base64.b64encode(logo_svg.getbuffer()).decode("ascii")
-        logo_png_data = base64.b64encode(logo_png.getbuffer()).decode("ascii")
+            # generate a set of peptides for the allele and length
+            peptides = alleles[allele][length]
 
-        #with open(f"{logoplot_svg_stem}.txt", "w") as logo_svg_datafile:
-        #    logo_svg_datafile.write(logo_svg_data)
-        
-        with open(f"{logoplot_png_stem}.txt", "w") as logo_png_datafile:
-            logo_png_datafile.write(logo_png_data)
-        
-        plt.close()
-        
-        print (f"Logoplot for {allele} {length}mer motif created")
+            # create a matrix of the peptides
+            counts_mat = logomaker.alignment_to_matrix(peptides)
+            counts_mat.index = range(1, int(length) + 1)
+            
+            # transform the matrix to information content
+            info_mat = logomaker.transform_matrix(counts_mat, from_type='counts', to_type='information')
+            
+            # initialise a set of variables for the logoplot, the png, and the png data
+            logoplot = None
+            logo_png = None
+            logo_png_data = None
+
+            # create the logoplot
+            logoplot = logomaker.Logo(info_mat, vpad=0.1, color_scheme=colors, show_spines=False, figsize=(25,20))
+            logoplot.ax.tick_params(axis='both', which='major', labelsize=40)
+
+            logoplot.ax.set_xlabel('Peptide position', fontsize=60, labelpad=10)
+            logoplot.ax.set_ylabel('Bits', fontsize=60, labelpad=40)
+
+            logoplot.style_spines(visible=False)
+            logoplot.style_spines(spines=['left', 'bottom'], visible=True)
+
+            # save the logoplot as a png, and generate the base64 encoded data
+            logo_png = BytesIO()
+
+            plt.savefig(f"{logoplot_png_stem}.png", format='png')
+
+            logo_png_data = base64.b64encode(logo_png.getbuffer()).decode("ascii")
+
+            with open(f"{logoplot_png_stem}.txt", "w") as logo_png_datafile:
+                logo_png_datafile.write(logo_png_data)
+            
+            # close the plot object, and clear the figure, if we don't do this we'll get a memory leak
+            plt.close()
+            
+            print (f"Logoplot for {allele} {length}mer motif created")
+        else:
+            print (f"Logoplot for {allele} {length}mer motif already exists")
 
         j += 1
         i += 1
