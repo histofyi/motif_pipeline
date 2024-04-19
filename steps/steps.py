@@ -66,15 +66,6 @@ steps = {
         'has_progress': False
     },
     '7':{
-        'function':build_text_descriptions,
-        'title_template':'the output to build a text description for each allele.',
-        'title_verb':['Processing', 'Processes'],
-        'is_multi': False,
-        'multi_param': None,
-        'multi_options': None,
-        'has_progress': False
-    },
-    '8':{
         'function':cluster_motifs,
         'title_template':'the output to cluster similar motifs - coming soon.',
         'title_verb':['Processing', 'Processes'],
@@ -83,9 +74,18 @@ steps = {
         'multi_options': None,
         'has_progress': False
     },
-    '9':{
+    '8':{
         'function':build_table_representation,
         'title_template':'the output to build a table representation for use in datasette - coming soon.',
+        'title_verb':['Processing', 'Processes'],
+        'is_multi': False,
+        'multi_param': None,
+        'multi_options': None,
+        'has_progress': False
+    },
+    '9':{
+        'function':build_text_descriptions,
+        'title_template':'the output to build a text description for each allele.',
         'title_verb':['Processing', 'Processes'],
         'is_multi': False,
         'multi_param': None,
