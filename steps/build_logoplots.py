@@ -135,9 +135,11 @@ def build_logoplots(**kwargs) -> Dict[str,str]:
             # close the plot object, and clear the figure, if we don't do this we'll get a memory leak
             plt.close()
             
-            print (f"Logoplot for {allele} {length}mer motif created")
+            if verbose:
+                print (f"Logoplot for {allele} {length}mer motif created")
         else:
-            print (f"Logoplot for {allele} {length}mer motif already exists")
+            if verbose:
+                print (f"Logoplot for {allele} {length}mer motif already exists")
 
         j += 1
         i += 1
