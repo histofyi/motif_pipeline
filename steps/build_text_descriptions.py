@@ -2,5 +2,5 @@
 
 
 
-def build_text_descriptions():
+def build_text_descriptions(**kwargs):
     pass
